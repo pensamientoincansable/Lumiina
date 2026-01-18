@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lumina - Neon Orbit</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="ui-layer">
+        <div id="score-container" class="hidden">
+            <span id="score-label">SCORE</span>
+            <span id="score-value">0</span>
+        </div>
+
+        <div id="start-screen" class="screen">
+            <h1 class="glow-text">LUMINA</h1>
+            <p class="subtitle">ORBIT SWITCH</p>
+            <div class="tutorial">
+                <p>TAP / CLICK to Switch Orbits</p>
+                <p>Dodge the Spikes</p>
+            </div>
+            <button id="start-btn" class="glow-btn">START SEQUENCE</button>
+        </div>
+
+        <div id="game-over-screen" class="screen hidden">
+            <h1 class="glow-text text-red">CRITICAL FAILURE</h1>
+            <div class="stats">
+                <p>SCORE: <span id="final-score">0</span></p>
+                <p>BEST: <span id="best-score">0</span></p>
+            </div>
+            <button id="restart-btn" class="glow-btn">REBOOT SYSTEM</button>
+        </div>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+</body>
+
+</html>

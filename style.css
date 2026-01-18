@@ -1,0 +1,155 @@
+:root {
+    --bg-color: #050510;
+    --primary-color: #00f3ff;
+    --secondary-color: #bc13fe;
+    --danger-color: #ff0055;
+    --text-color: #ffffff;
+    --font-display: 'Orbitron', sans-serif;
+    --font-ui: 'Inter', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: var(--bg-color);
+    font-family: var(--font-ui);
+    color: var(--text-color);
+    width: 100vw;
+    height: 100vh;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#ui-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    /* Let clicks pass through to canvas usually */
+}
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(5, 5, 16, 0.85);
+    backdrop-filter: blur(5px);
+    transition: opacity 0.3s ease;
+    pointer-events: auto;
+}
+
+.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+h1.glow-text {
+    font-family: var(--font-display);
+    font-size: 4rem;
+    margin: 0;
+    letter-spacing: 4px;
+    text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+    animation: pulse 2s infinite alternate;
+}
+
+.text-red {
+    color: var(--danger-color);
+    text-shadow: 0 0 10px var(--danger-color), 0 0 20px var(--danger-color);
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    letter-spacing: 6px;
+    color: var(--secondary-color);
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+    opacity: 0.8;
+}
+
+.tutorial {
+    margin: 2rem 0;
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.7;
+}
+
+.glow-btn {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    padding: 15px 40px;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    cursor: pointer;
+    text-shadow: 0 0 5px var(--primary-color);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.2), inset 0 0 10px rgba(0, 243, 255, 0.1);
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+}
+
+.glow-btn:hover {
+    background: var(--primary-color);
+    color: var(--bg-color);
+    box-shadow: 0 0 20px var(--primary-color);
+}
+
+.glow-btn:active {
+    transform: scale(0.95);
+}
+
+#score-container {
+    position: absolute;
+    top: 40px;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+#score-container.hidden {
+    opacity: 0;
+}
+
+#score-label {
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    opacity: 0.6;
+}
+
+#score-value {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.8;
+        text-shadow: 0 0 10px var(--primary-color);
+    }
+
+    100% {
+        opacity: 1;
+        text-shadow: 0 0 20px var(--primary-color), 0 0 40px var(--primary-color);
+    }
+}
