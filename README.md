@@ -1,6 +1,14 @@
 # Lumiina
 
-Lumiina es un laboratorio visual estático para generar imágenes con Gemini, con una interfaz holográfica y un render de profundidad 5D basado en el movimiento del cursor.
+Lumiina es un laboratorio visual estático para generar imágenes con Gemini, con una interfaz holográfica y un núcleo 3D interactivo renderizado en canvas: una icosfera de alambre con proyección en perspectiva, anillos orbitales con satélites y estelas, barrido de escáner, ondas de choque y parallax con el cursor.
+
+## Interacción del núcleo holográfico
+
+- **Arrastrar** sobre el orbe para rotarlo en 3D (con inercia al soltar).
+- **Clic** para emitir una onda de choque; **doble clic** para restablecer la vista.
+- **Ctrl + rueda** o **pellizco** para zoom (la rueda normal conserva el scroll).
+- Botones **− / ⊙ / +** sobre el orbe para alejar, restablecer y acercar.
+- El movimiento del puntero añade parallax en profundidad. En pantallas táctiles el gesto vertical sigue desplazando la página (`touch-action: pan-y`).
 
 ## Ejecutar
 

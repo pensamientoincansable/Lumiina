@@ -61,7 +61,7 @@
                 </div>
             </div>
 
-            <div class="hero-orbit tilt-card" data-tilt-strength="0.7" aria-hidden="true">
+            <div class="hero-orbit hero-orbit--holo tilt-card" data-tilt-strength="0.7" aria-label="Núcleo holográfico interactivo">
                 <div class="hero-orbit__halo hero-orbit__halo--one"></div>
                 <div class="hero-orbit__halo hero-orbit__halo--two"></div>
                 <div class="hero-orbit__planet">
@@ -75,6 +75,12 @@
                 <div class="hero-orbit__satellite hero-orbit__satellite--a"></div>
                 <div class="hero-orbit__satellite hero-orbit__satellite--b"></div>
                 <div class="orbit-readout"><span class="orbit-readout__dot"></span> DEPTH MAP ACTIVE</div>
+                <div class="orbit-controls" role="group" aria-label="Controles del núcleo holográfico">
+                    <button id="orbit-zoom-out" class="orbit-control" type="button" aria-label="Alejar el núcleo" title="Alejar">−</button>
+                    <button id="orbit-zoom-reset" class="orbit-control orbit-control--wide" type="button" aria-label="Restablecer vista" title="Restablecer vista">⊙</button>
+                    <button id="orbit-zoom-in" class="orbit-control" type="button" aria-label="Acercar el núcleo" title="Acercar">+</button>
+                </div>
+                <p class="orbit-gesture-hint">ARRASTRA PARA ROTAR · CLIC PARA PULSAR</p>
             </div>
         </section>
 
@@ -222,7 +228,7 @@
             <div class="signal-strip__item"><span class="signal-number">01</span><span class="signal-rule"></span><span>Prompt engineering</span></div>
             <div class="signal-strip__item"><span class="signal-number">02</span><span class="signal-rule"></span><span>Facial fidelity lock</span></div>
             <div class="signal-strip__item"><span class="signal-number">03</span><span class="signal-rule"></span><span>Gemini image core</span></div>
-            <p class="signal-strip__hint">Mueve el cursor para explorar la profundidad <span>✦</span></p>
+            <p class="signal-strip__hint">Arrastra el núcleo para rotarlo · pellizca, Ctrl+rueda o usa +/− para el zoom · clic para emitir un pulso <span>✦</span></p>
         </section>
 
         <section id="gallery" class="gallery-section" aria-labelledby="gallery-title">
