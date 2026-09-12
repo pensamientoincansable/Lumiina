@@ -1,47 +1,269 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lumina - Neon Orbit</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#070a18">
+    <meta name="description" content="Lumiina es un laboratorio de imágenes generativas con estética holográfica.">
+    <title>Lumiina — Generative Image Lab</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;600&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Orbitron:wght@500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <canvas id="gameCanvas"></canvas>
+    <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+    <div class="aurora aurora--cyan" aria-hidden="true"></div>
+    <div class="aurora aurora--violet" aria-hidden="true"></div>
+    <div class="scanlines" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div id="cursor-halo" class="cursor-halo" aria-hidden="true"></div>
+    <div id="cursor-dot" class="cursor-dot" aria-hidden="true"></div>
 
-    <div id="ui-layer">
-        <div id="score-container" class="hidden">
-            <span id="score-label">SCORE</span>
-            <span id="score-value">0</span>
-        </div>
+    <header class="topbar">
+        <a class="brand" href="#top" aria-label="Lumiina, volver al inicio">
+            <span class="brand-mark" aria-hidden="true">
+                <span class="brand-mark__ring"></span>
+                <span class="brand-mark__core">L</span>
+            </span>
+            <span class="brand-word">LUMI<span>INA</span></span>
+            <span class="brand-version">/ GEN 01</span>
+        </a>
 
-        <div id="start-screen" class="screen">
-            <h1 class="glow-text">LUMINA</h1>
-            <p class="subtitle">ORBIT SWITCH</p>
-            <div class="tutorial">
-                <p>TAP / CLICK to Switch Orbits</p>
-                <p>Dodge the Spikes</p>
+        <nav class="main-nav" aria-label="Navegación principal">
+            <a class="is-active" href="#studio">Studio <span>01</span></a>
+            <a href="#gallery">Gallery <span>02</span></a>
+            <a href="#protocol">Protocol <span>03</span></a>
+        </nav>
+
+        <button id="api-settings-btn" class="connection-pill" type="button" aria-haspopup="dialog">
+            <span id="api-status-dot" class="status-dot"></span>
+            <span id="api-status-label">API OFFLINE</span>
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+                <path d="M8 1.75v12.5M1.75 8h12.5M3.58 3.58l8.84 8.84M12.42 3.58 3.58 12.42" />
+            </svg>
+        </button>
+    </header>
+
+    <main id="top" class="page-shell">
+        <section class="hero" aria-labelledby="hero-title">
+            <div class="hero-copy">
+                <p class="eyebrow"><span class="eyebrow-signal"></span> GENERATIVE IMAGING <span class="eyebrow-divider">//</span> 05D</p>
+                <h1 id="hero-title">Haz visible<br><em>lo imposible.</em></h1>
+                <p class="hero-lede">Un laboratorio visual para transformar ideas en imágenes con profundidad, luz y detalle. Diseñado para que cada rostro se mantenga nítido, presente y real.</p>
+                <div class="hero-telemetry" aria-label="Estado del sistema">
+                    <div class="telemetry-item"><span class="telemetry-value">∞</span><span>posibilidades</span></div>
+                    <div class="telemetry-line"></div>
+                    <div class="telemetry-item"><span class="telemetry-value">2K</span><span>detalle óptico</span></div>
+                    <div class="telemetry-line"></div>
+                    <div class="telemetry-item"><span class="telemetry-value">LIVE</span><span>render field</span></div>
+                </div>
             </div>
-            <button id="start-btn" class="glow-btn">START SEQUENCE</button>
-        </div>
 
-        <div id="game-over-screen" class="screen hidden">
-            <h1 class="glow-text text-red">CRITICAL FAILURE</h1>
-            <div class="stats">
-                <p>SCORE: <span id="final-score">0</span></p>
-                <p>BEST: <span id="best-score">0</span></p>
+            <div class="hero-orbit tilt-card" data-tilt-strength="0.7" aria-hidden="true">
+                <div class="hero-orbit__halo hero-orbit__halo--one"></div>
+                <div class="hero-orbit__halo hero-orbit__halo--two"></div>
+                <div class="hero-orbit__planet">
+                    <div class="planet-grid"></div>
+                    <div class="planet-core"></div>
+                    <span class="planet-label planet-label--top">LIGHT FIELD</span>
+                    <span class="planet-label planet-label--bottom">LUMIINA / 01</span>
+                </div>
+                <div class="hero-orbit__ring hero-orbit__ring--a"></div>
+                <div class="hero-orbit__ring hero-orbit__ring--b"></div>
+                <div class="hero-orbit__satellite hero-orbit__satellite--a"></div>
+                <div class="hero-orbit__satellite hero-orbit__satellite--b"></div>
+                <div class="orbit-readout"><span class="orbit-readout__dot"></span> DEPTH MAP ACTIVE</div>
             </div>
-            <button id="restart-btn" class="glow-btn">REBOOT SYSTEM</button>
-        </div>
-    </div>
+        </section>
 
+        <section id="studio" class="studio-grid" aria-label="Laboratorio de generación">
+            <aside class="control-panel glass-panel tilt-card" data-tilt-strength="1" aria-labelledby="control-title">
+                <div class="panel-heading">
+                    <div class="panel-index">01</div>
+                    <div>
+                        <p class="panel-kicker">INPUT SIGNAL</p>
+                        <h2 id="control-title">Build the signal</h2>
+                    </div>
+                    <span class="panel-code">LMN_01</span>
+                </div>
+
+                <form id="generator-form" novalidate>
+                    <div class="field-group">
+                        <div class="field-label-row">
+                            <label class="field-label" for="prompt">Prompt visual</label>
+                            <span id="prompt-count" class="field-count">0 / 800</span>
+                        </div>
+                        <div class="prompt-shell">
+                            <textarea id="prompt" name="prompt" maxlength="800" rows="6" placeholder="Describe la imagen que quieres ver..." required>Retrato editorial de una exploradora en un jardín bioluminiscente, luz de neón cyan y violeta, mirada directa a cámara</textarea>
+                            <div class="prompt-footer">
+                                <span class="prompt-hint"><span class="mini-spark">✦</span> Sé específico con la atmósfera</span>
+                                <button id="enhance-prompt-btn" class="text-action" type="button">✦ ENHANCE</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <div class="field-label-row">
+                            <span class="field-label">Dirección visual</span>
+                            <span class="field-count">STYLE</span>
+                        </div>
+                        <div id="style-options" class="style-options" role="radiogroup" aria-label="Estilo visual">
+                            <button class="style-chip is-selected" type="button" data-style="holographic editorial" role="radio" aria-checked="true"><span class="style-chip__dot"></span> Holographic</button>
+                            <button class="style-chip" type="button" data-style="cinematic sci-fi" role="radio" aria-checked="false"><span class="style-chip__dot"></span> Cinematic</button>
+                            <button class="style-chip" type="button" data-style="dreamlike surreal" role="radio" aria-checked="false"><span class="style-chip__dot"></span> Surreal</button>
+                            <button class="style-chip" type="button" data-style="clean studio portrait" role="radio" aria-checked="false"><span class="style-chip__dot"></span> Studio</button>
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <div class="field-group field-group--compact">
+                            <div class="field-label-row"><span class="field-label">Aspect ratio</span><span class="field-count">FRAME</span></div>
+                            <div class="segmented-control" role="radiogroup" aria-label="Relación de aspecto">
+                                <button class="segment is-selected" type="button" data-ratio="1:1" role="radio" aria-checked="true">1:1</button>
+                                <button class="segment" type="button" data-ratio="16:9" role="radio" aria-checked="false">16:9</button>
+                                <button class="segment" type="button" data-ratio="9:16" role="radio" aria-checked="false">9:16</button>
+                            </div>
+                        </div>
+
+                        <div class="field-group field-group--compact">
+                            <div class="field-label-row"><span class="field-label">Focus lock</span><span class="field-count">FACE</span></div>
+                            <label class="toggle-row" for="face-focus">
+                                <input id="face-focus" type="checkbox" checked>
+                                <span class="toggle" aria-hidden="true"><span></span></span>
+                                <span class="toggle-label">Detail boost</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <div class="field-label-row"><label class="field-label" for="reference-input">Reference frame <span class="optional">OPTIONAL</span></label><span class="field-count">IMAGE</span></div>
+                        <div id="reference-drop" class="reference-drop">
+                            <input id="reference-input" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+                            <div id="reference-empty" class="reference-empty">
+                                <span class="upload-icon" aria-hidden="true">↥</span>
+                                <span><strong>Arrastra una imagen</strong> o explora tus archivos</span>
+                                <small>PNG, JPG o WEBP · máx. 8 MB</small>
+                            </div>
+                            <div id="reference-preview" class="reference-preview" hidden>
+                                <img id="reference-image" alt="Vista previa de la referencia">
+                                <div class="reference-info"><strong id="reference-name">reference.jpg</strong><small id="reference-size">0 KB</small></div>
+                                <button id="remove-reference-btn" class="remove-reference" type="button" aria-label="Quitar imagen de referencia">×</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="generate-row">
+                        <button id="generate-btn" class="generate-btn" type="submit">
+                            <span class="generate-btn__icon">✦</span>
+                            <span class="generate-btn__label">GENERATE IMAGE</span>
+                            <span class="generate-btn__arrow">↗</span>
+                        </button>
+                        <p class="generate-note"><span class="secure-mark">⌁</span> Tu key permanece en este dispositivo</p>
+                    </div>
+                </form>
+            </aside>
+
+            <section class="preview-panel glass-panel tilt-card" data-tilt-strength="0.65" aria-labelledby="preview-title">
+                <div class="panel-heading panel-heading--preview">
+                    <div class="panel-index">02</div>
+                    <div>
+                        <p class="panel-kicker">OUTPUT MATRIX</p>
+                        <h2 id="preview-title">Preview chamber</h2>
+                    </div>
+                    <div class="live-indicator"><span></span> LIVE</div>
+                </div>
+
+                <div id="preview-stage" class="preview-stage" data-state="empty">
+                    <div class="preview-corner preview-corner--tl"></div><div class="preview-corner preview-corner--tr"></div><div class="preview-corner preview-corner--bl"></div><div class="preview-corner preview-corner--br"></div>
+                    <div class="preview-grid" aria-hidden="true"></div>
+                    <div id="empty-preview" class="empty-preview">
+                        <div class="empty-glyph"><span></span><span></span><span></span><span></span></div>
+                        <p class="empty-kicker">AWAITING INPUT</p>
+                        <h3>Tu próxima dimensión<br><em>aparecerá aquí.</em></h3>
+                        <p class="empty-copy">Escribe un prompt y activa el render para abrir el campo de luz.</p>
+                    </div>
+                    <div id="loading-preview" class="loading-preview" hidden>
+                        <div class="loader-orbit"><span></span><span></span><span></span><div class="loader-core">L</div></div>
+                        <p class="loading-kicker">SYNTHESIZING LIGHT FIELD</p>
+                        <p id="loading-copy" class="loading-copy">Calibrando el detalle facial...</p>
+                        <div class="loading-meter"><span></span></div>
+                    </div>
+                    <div id="error-preview" class="error-preview" hidden>
+                        <div class="error-glyph">!</div>
+                        <p class="empty-kicker">SIGNAL INTERRUPTED</p>
+                        <h3 id="error-title">No se pudo completar el render.</h3>
+                        <p id="error-copy" class="empty-copy">Comprueba tu API key e inténtalo de nuevo.</p>
+                        <button id="error-settings-btn" class="text-action" type="button">ABRIR CONFIGURACIÓN ↗</button>
+                    </div>
+                    <img id="result-image" class="result-image" alt="Imagen generada por Lumiina" hidden>
+                    <div id="result-badge" class="result-badge" hidden><span>✦</span> FACE DETAIL LOCKED</div>
+                </div>
+
+                <div class="preview-footer">
+                    <div class="render-meta">
+                        <span class="meta-label">RENDER STATUS</span>
+                        <span id="render-status" class="meta-value"><i class="meta-dot"></i> STANDBY</span>
+                    </div>
+                    <div class="render-meta">
+                        <span class="meta-label">FRAME</span>
+                        <span id="render-frame" class="meta-value">1:1 · 2K TARGET</span>
+                    </div>
+                    <div class="preview-actions">
+                        <button id="copy-prompt-btn" class="icon-btn" type="button" title="Copiar prompt" aria-label="Copiar prompt" disabled>⌘</button>
+                        <button id="download-btn" class="download-btn" type="button" disabled><span>↓</span> DOWNLOAD</button>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <section class="signal-strip" aria-label="Información del render">
+            <div class="signal-strip__item"><span class="signal-number">01</span><span class="signal-rule"></span><span>Prompt engineering</span></div>
+            <div class="signal-strip__item"><span class="signal-number">02</span><span class="signal-rule"></span><span>Facial fidelity lock</span></div>
+            <div class="signal-strip__item"><span class="signal-number">03</span><span class="signal-rule"></span><span>Gemini image core</span></div>
+            <p class="signal-strip__hint">Mueve el cursor para explorar la profundidad <span>✦</span></p>
+        </section>
+
+        <section id="gallery" class="gallery-section" aria-labelledby="gallery-title">
+            <div class="section-heading">
+                <div><p class="panel-kicker">MEMORY BANK</p><h2 id="gallery-title">Recent signals</h2></div>
+                <span id="gallery-count" class="section-count">0 / SESSION</span>
+            </div>
+            <div id="gallery-grid" class="gallery-grid">
+                <div class="gallery-empty"><span>◌</span><p>Tus renders aparecerán aquí durante esta sesión.</p></div>
+            </div>
+        </section>
+
+        <section id="protocol" class="protocol-section" aria-labelledby="protocol-title">
+            <div class="protocol-copy"><p class="panel-kicker">THE PROTOCOL</p><h2 id="protocol-title">Una imagen no es un final.<br><em>Es una puerta.</em></h2></div>
+            <div class="protocol-list">
+                <div class="protocol-item"><span>01</span><div><strong>Escribe con intención</strong><p>Describe luz, cámara, textura y emoción. El modelo entiende el mundo que imaginas.</p></div></div>
+                <div class="protocol-item"><span>02</span><div><strong>Bloquea el detalle</strong><p>El modo Focus lock añade instrucciones de nitidez para ojos, pl y rasgos naturales.</p></div></div>
+                <div class="protocol-item"><span>03</span><div><strong>Itera sin límites</strong><p>Cambia la atmósfera, conserva la idea y descubre una nueva coordenada visual.</p></div></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer"><span>LUMIINA / GENERATIVE IMAGE LAB</span><span>BUILT FOR THE UNSEEN <i>✦</i></span><span>2026 — 05D</span></footer>
+
+    <dialog id="api-dialog" class="api-dialog" aria-labelledby="api-dialog-title">
+        <div class="dialog-scanline" aria-hidden="true"></div>
+        <button id="close-dialog-btn" class="dialog-close" type="button" aria-label="Cerrar configuración">×</button>
+        <div class="dialog-heading"><span class="dialog-icon">⌁</span><div><p class="panel-kicker">SYSTEM LINK</p><h2 id="api-dialog-title">Connect Gemini</h2></div></div>
+        <p class="dialog-copy">Introduce tu Gemini API key para activar el núcleo de imágenes. Se guarda únicamente en el almacenamiento local de este navegador y nunca se envía a Lumiina.</p>
+        <form id="api-form">
+            <label class="field-label" for="api-key">Gemini API key</label>
+            <div class="key-input-wrap"><input id="api-key" name="api-key" type="password" autocomplete="off" spellcheck="false" placeholder="AIza••••••••••••••••••••••••••••••••••••"><button id="toggle-key-btn" type="button" aria-label="Mostrar API key">SHOW</button></div>
+            <p id="api-helper" class="api-helper">La key se valida contra la API antes de guardar la conexión.</p>
+            <div class="dialog-actions"><button id="clear-key-btn" class="secondary-btn" type="button">CLEAR</button><button class="glow-submit" type="submit"><span>TEST &amp; CONNECT</span><b>↗</b></button></div>
+        </form>
+        <div id="dialog-status" class="dialog-status" role="status" aria-live="polite"><span class="status-dot"></span><span>Esperando una conexión segura.</span></div>
+        <p class="dialog-footnote">¿No tienes una key? Créala en <a href="https://aistudio.google.com/apikey" target="_blank" rel="noreferrer">Google AI Studio ↗</a></p>
+    </dialog>
+
+    <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
     <script type="module" src="src/main.js"></script>
 </body>
 
-</html>
+</html>l>
