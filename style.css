@@ -2326,3 +2326,138 @@ button:disabled {
         transition-duration: 0.001ms !important;
     }
 }
+
+/* ============================================================ */
+/* Núcleo holográfico 3D (HologramField) + gestos               */
+/* ============================================================ */
+
+#ambient-canvas {
+    opacity: 0.92;
+}
+
+.hero-orbit {
+    cursor: grab;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.hero-orbit.is-grabbing {
+    cursor: grabbing;
+}
+
+/* El núcleo 3D del canvas sustituye al ensamblaje decorativo CSS */
+.hero-orbit--holo::before,
+.hero-orbit--holo::after {
+    content: none;
+}
+
+.hero-orbit--holo .hero-orbit__halo,
+.hero-orbit--holo .hero-orbit__planet,
+.hero-orbit--holo .hero-orbit__ring,
+.hero-orbit--holo .hero-orbit__satellite {
+    display: none;
+}
+
+.orbit-controls {
+    position: absolute;
+    z-index: 6;
+    top: 9%;
+    right: 1%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.orbit-control {
+    display: grid;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    padding: 0;
+    color: rgba(186, 246, 255, 0.82);
+    font-family: var(--font-display);
+    font-size: 15px;
+    line-height: 1;
+    background: linear-gradient(145deg, rgba(24, 39, 74, 0.82), rgba(8, 12, 30, 0.82));
+    border: 1px solid rgba(128, 242, 255, 0.32);
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px rgba(6, 10, 26, 0.6), 0 0 14px rgba(128, 242, 255, 0.16), inset 0 0 12px rgba(128, 242, 255, 0.08);
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: transform 0.18s ease, color 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.orbit-control--wide {
+    font-size: 12px;
+}
+
+.orbit-control:hover {
+    color: #fff;
+    border-color: rgba(128, 242, 255, 0.75);
+    box-shadow: 0 0 18px rgba(128, 242, 255, 0.4), inset 0 0 14px rgba(128, 242, 255, 0.16);
+    transform: translateY(-1px);
+}
+
+.orbit-control:active {
+    transform: translateY(0) scale(0.94);
+}
+
+.orbit-gesture-hint {
+    position: absolute;
+    z-index: 6;
+    bottom: 6%;
+    left: 1%;
+    margin: 0;
+    color: var(--muted-2);
+    font-family: var(--font-mono);
+    font-size: 7px;
+    letter-spacing: 0.16em;
+    white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+    .orbit-controls {
+        top: 4%;
+        right: 3%;
+    }
+
+    .orbit-gesture-hint {
+        left: 3%;
+        bottom: 3%;
+    }
+}
+
+/* Barrido holográfico sobre la imagen ya renderizada */
+#preview-stage[data-state="result"]::after {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(180deg,
+        transparent 38%,
+        rgba(128, 242, 255, 0.13) 49%,
+        rgba(214, 250, 255, 0.18) 50%,
+        rgba(128, 242, 255, 0.13) 51%,
+        transparent 62%);
+    background-size: 100% 280%;
+    mix-blend-mode: screen;
+    content: '';
+    animation: holo-sheen 5.4s linear infinite;
+}
+
+@keyframes holo-sheen {
+    0% { background-position: 0 100%; }
+    100% { background-position: 0 -100%; }
+}
+
+#preview-stage[data-state="result"] .result-image {
+    filter: saturate(1.04) contrast(1.02);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #preview-stage[data-state="result"]::after {
+        animation: none;
+        opacity: 0.4;
+    }
+}

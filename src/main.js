@@ -1,4 +1,5 @@
 import { GeminiImageClient, getFriendlyApiError } from './gemini.js';
+import { HologramField } from './hologram.js';
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
@@ -61,140 +62,6 @@ const elements = {
     errorSettings: $('#error-settings-btn'),
     toastRegion: $('#toast-region')
 };
-
-class AmbientField {
-    constructor(canvas) {
-        this.canvas = canvas;
-        this.context = canvas.getContext('2d');
-        this.width = 0;
-        this.height = 0;
-        this.dpr = Math.min(window.devicePixelRatio || 1, 2);
-        this.pointer = { x: 0.5, y: 0.46 };
-        this.stars = [];
-        this.resize = this.resize.bind(this);
-        this.render = this.render.bind(this);
-
-        window.addEventListener('resize', this.resize, { passive: true });
-        this.resize();
-        requestAnimationFrame(this.render);
-    }
-
-    resize() {
-        this.dpr = Math.min(window.devicePixelRatio || 1, 2);
-        this.width = window.innerWidth;
-        this.height = window.innerHeight;
-        this.canvas.width = Math.floor(this.width * this.dpr);
-        this.canvas.height = Math.floor(this.height * this.dpr);
-        this.canvas.style.width = `${this.width}px`;
-        this.canvas.style.height = `${this.height}px`;
-        this.stars = Array.from({ length: Math.max(85, Math.floor(this.width / 11)) }, () => ({
-            x: Math.random(),
-            y: Math.random(),
-            depth: Math.random(),
-            size: Math.random() * 1.4 + 0.25,
-            phase: Math.random() * Math.PI * 2
-        }));
-    }
-
-    setPointer(x, y) {
-        this.pointer.x = x;
-        this.pointer.y = y;
-    }
-
-    render(time) {
-        const ctx = this.context;
-        const { width, height, dpr, pointer } = this;
-        const t = time * 0.00035;
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        ctx.clearRect(0, 0, width, height);
-
-        const glowX = width * (0.5 + (pointer.x - 0.5) * 0.12);
-        const glowY = height * (0.43 + (pointer.y - 0.5) * 0.1);
-        const glow = ctx.createRadialGradient(glowX, glowY, 0, glowX, glowY, Math.max(width, height) * 0.54);
-        glow.addColorStop(0, 'rgba(38, 156, 194, 0.10)');
-        glow.addColorStop(0.42, 'rgba(64, 74, 164, 0.035)');
-        glow.addColorStop(1, 'rgba(4, 7, 18, 0)');
-        ctx.fillStyle = glow;
-        ctx.fillRect(0, 0, width, height);
-
-        this.drawStars(ctx, t);
-        this.drawDepthGrid(ctx, t);
-        this.drawOrbitalField(ctx, t);
-
-        requestAnimationFrame(this.render);
-    }
-
-    drawStars(ctx, time) {
-        for (const star of this.stars) {
-            const drift = (star.depth * 15 + 3) * time;
-            const x = ((star.x * this.width + (this.pointer.x - 0.5) * star.depth * 42 + drift) % (this.width + 20)) - 10;
-            const y = ((star.y * this.height + (this.pointer.y - 0.5) * star.depth * 28) % (this.height + 20)) - 10;
-            const pulse = 0.45 + Math.sin(time * 2.5 + star.phase) * 0.25;
-            ctx.globalAlpha = Math.max(0.08, pulse * (0.35 + star.depth * 0.65));
-            ctx.fillStyle = star.depth > 0.76 ? '#b9a8ff' : '#8befff';
-            ctx.beginPath();
-            ctx.arc(x, y, star.size * (0.6 + star.depth), 0, Math.PI * 2);
-            ctx.fill();
-        }
-        ctx.globalAlpha = 1;
-    }
-
-    drawDepthGrid(ctx, time) {
-        const horizon = this.height * 0.67;
-        const centerX = this.width * (0.5 + (this.pointer.x - 0.5) * 0.13);
-        const bottom = this.height * 1.25;
-        ctx.save();
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = 'rgba(104, 193, 225, 0.052)';
-        for (let i = -14; i <= 14; i += 1) {
-            const baseX = centerX + i * (this.width * 0.075);
-            ctx.beginPath();
-            ctx.moveTo(centerX + (baseX - centerX) * 0.05, horizon);
-            ctx.lineTo(baseX + (this.pointer.x - 0.5) * i * 15, bottom);
-            ctx.stroke();
-        }
-        for (let i = 0; i < 11; i += 1) {
-            const progress = ((i / 10 + time * 0.08) % 1);
-            const y = horizon + Math.pow(progress, 2.2) * (bottom - horizon);
-            ctx.globalAlpha = (1 - progress) * 0.26;
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(this.width, y);
-            ctx.stroke();
-        }
-        ctx.restore();
-    }
-
-    drawOrbitalField(ctx, time) {
-        const cx = this.width * 0.77 + (this.pointer.x - 0.5) * 26;
-        const cy = this.height * 0.56 + (this.pointer.y - 0.5) * 20;
-        const radius = Math.min(this.width, this.height) * 0.22;
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(-0.18 + Math.sin(time * 0.7) * 0.03);
-        ctx.lineWidth = 1;
-        ctx.strokeStyle = 'rgba(128, 242, 255, 0.11)';
-        ctx.setLineDash([2, 11]);
-        ctx.beginPath();
-        ctx.ellipse(0, 0, radius * 1.48, radius * 0.37, 0, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.strokeStyle = 'rgba(169, 130, 255, 0.085)';
-        ctx.setLineDash([1, 17]);
-        ctx.beginPath();
-        ctx.ellipse(0, 0, radius * 1.16, radius * 0.59, 0, 0, Math.PI * 2);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        const pulse = (Math.sin(time * 1.7) + 1) / 2;
-        const pulseRadius = radius * (0.72 + pulse * 0.35);
-        ctx.strokeStyle = `rgba(128, 242, 255, ${0.04 + pulse * 0.11})`;
-        ctx.beginPath();
-        ctx.arc(0, 0, pulseRadius, 0, Math.PI * 2);
-        ctx.stroke();
-
-        ctx.restore();
-    }
-}
 
 function setupCursorEffects(ambient) {
     const pointer = { targetX: window.innerWidth / 2, targetY: window.innerHeight / 2, x: window.innerWidth / 2, y: window.innerHeight / 2 };
@@ -655,18 +522,18 @@ async function checkStoredConnection() {
 }
 
 function init() {
-    const ambient = new AmbientField(elements.canvas);
-    setupCursorEffects(ambient);
-    setupInteractions();
-    checkStoredConnection();
-}
-
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init, { once: true });
-} else {
-    init();
-}
-elements.canvas);
+    const anchor = document.querySelector('.hero-orbit');
+    const ambient = new HologramField(elements.canvas, {
+        anchor,
+        readout: document.querySelector('.orbit-readout')
+    });
+    ambient.attachGestures(anchor);
+    $('#orbit-zoom-in')?.addEventListener('click', () => {
+        ambient.zoomBy(1.18);
+        ambient.pulse(0.5);
+    });
+    $('#orbit-zoom-out')?.addEventListener('click', () => ambient.zoomBy(1 / 1.18));
+    $('#orbit-zoom-reset')?.addEventListener('click', () => ambient.resetView());
     setupCursorEffects(ambient);
     setupInteractions();
     checkStoredConnection();
